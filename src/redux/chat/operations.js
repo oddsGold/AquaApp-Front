@@ -72,7 +72,6 @@ export const getUserMessages = createAsyncThunk(
 export const sendUserMessages = createAsyncThunk(
   'chat/send-messages',
   async (data, thunkAPI) => {
-    console.log("data", data);
     try {
       const response = await sendMessages(data);
 

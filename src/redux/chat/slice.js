@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
-  fetchUserChats, getAllUsers, getCompanionUserInfo, getUserMessages,
+  fetchUserChats, getAllUsers, getCompanionUserInfo, getUserMessages, sendUserMessages,
 } from './operations';
 
 import { CHAT_INITIAL_STATE } from './initialState';
@@ -82,6 +82,20 @@ const chatSlice = createSlice({
         state.isLoading = false;
         state.isError = action.payload;
       })
+
+      .addCase(sendUserMessages.pending, state => {
+        state.isLoading = true;
+        state.isError = null;
+      })
+      .addCase(sendUserMessages.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.newMessage = action.payload.message;
+      })
+      .addCase(sendUserMessages.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = action.payload;
+      })
+
       .addCase(logOut.fulfilled, () => CHAT_INITIAL_STATE);
   },
 });

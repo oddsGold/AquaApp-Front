@@ -18,21 +18,21 @@ class SocketService {
     }
   }
 
-  // Функция для отправки события
+  // func for send event
   emit(event, data) {
     if (this.socket) {
       this.socket.emit(event, data);
     }
   }
 
-  // Функция для прослушивания событий
+  // func for listen event
   on(event, callback) {
     if (this.socket) {
       this.socket.on(event, callback);
     }
   }
 
-  // Функция для отключения прослушивания события
+  // func for turn-off event
   off(event) {
     if (this.socket) {
       this.socket.off(event);

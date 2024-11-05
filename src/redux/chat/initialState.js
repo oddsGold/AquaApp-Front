@@ -10,6 +10,7 @@ export const CHAT_INITIAL_STATE = {
   currentChat: null, //вибраний чат в списку створених чатів
   currentRecipient: null, //поле для поточного отримувача
   onlineUsers: [], //онлайн користувачі
+  newMessage: null,
   messages: [],
   draftMessages: {},
   isLoading: false,

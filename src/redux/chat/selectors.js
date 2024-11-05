@@ -8,3 +8,4 @@ export const selectUsers = state => state.chats.users;
 export const selectPotentialChats = state => state.chats.potentialChats;
 export const selectCurrentRecipient = state => state.chats.currentRecipient;
 export const selectOnlineUsers = state => state.chats.onlineUsers;
+export const selectNewMessage = state => state.chats.newMessage;

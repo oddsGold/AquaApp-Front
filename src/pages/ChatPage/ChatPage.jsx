@@ -93,7 +93,7 @@ const ChatPage = () => {
 
   //відправляємо повідомлення в вираному чаті, передаємо 3 аргументи (саме повідомлення, хто відправляє, id чату)
   //після відправки повідомлення забираємо всі повідомлення в цьому чаті
-  const sendMessage = useCallback(async (textMessage, senderId, chatId) => {
+  const sendMessage = useCallback(async (textMessage, senderId, chatId, setTextMessage) => {
     const data = {textMessage, senderId, chatId};
     await dispatch(sendUserMessages(data));
     await dispatch(getUserMessages(chatId));
