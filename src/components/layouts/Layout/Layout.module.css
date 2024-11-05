@@ -11,6 +11,12 @@
   padding: 24px 16px 30px 16px;
 }
 
+.chatWrapper {
+  border-radius: 30px;
+  min-height: calc(100vh - 64px);
+  background-color: var(--color-second-bg);
+  padding: 32px 32px 40px 32px;
+}
 .layoutWrapper {
   border-radius: 30px;
   display: grid;

@@ -4,7 +4,8 @@ import LogOutModal from '../LogOutModal/LogOutModal';
 import UserSettingsModal from '../UserSettingsModal/UserSettingsModal';
 import Icon from '../Icon/Icon';
 import css from './UserBarPopover.module.css';
-import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { IoChatboxEllipsesOutline } from "react-icons/io5";
 
 export default function UserBarPopover({
   style,
@@ -22,6 +23,12 @@ export default function UserBarPopover({
           <Icon id="settings" className={css.icon} />
         </div>
         Settings
+      </button>
+      <button className={css.btnSet} type="button">
+        <div className={css.wrapIcon}>
+          <IoChatboxEllipsesOutline className={css.icon} />
+        </div>
+        <Link to="/chats">Chats</Link>
       </button>
       <button className={css.btnLogOut} type="button" onClick={openLogOutModal}>
         <div className={css.wrapIcon}>

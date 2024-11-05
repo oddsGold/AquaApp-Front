@@ -130,7 +130,7 @@ const authSlice = createSlice({
       })
       .addCase(refreshToken.rejected, (state) => {
         state.isRefreshing = false;
-      });
+      })
   },
 });
 

@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getUserInfo } from './redux/auth/operations.js';
 import { selectIsRefreshing, selectToken } from './redux/auth/selectors.js';
 import Loader from './components/Loader/Loader.jsx';
+import ChatPage from './pages/ChatPage/ChatPage.jsx';
+import 'bootstrap/dist/css/bootstrap.css';
 
 const HomePage = lazy(() => import('./pages/HomePage/HomePage.jsx'));
 const SignInPage = lazy(() => import('./pages/SignInPage/SignInPage.jsx'));
@@ -53,6 +55,12 @@ function App() {
           path="/tracker"
           element={
             <PrivateRoute redirectTo="/signin" component={<TrackerPage />} />
+          }
+        />
+        <Route
+          path="/chats"
+          element={
+            <PrivateRoute redirectTo="/signin" component={<ChatPage />} />
           }
         />
         <Route path="*" element={<NotFoundPage />} />
