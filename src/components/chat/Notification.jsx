@@ -1,12 +1,15 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectNotifications } from '../../redux/socket/selectors.js';
 import { selectChats, selectUsers } from '../../redux/chat/selectors.js';
 import { selectUser } from '../../redux/auth/selectors.js';
 import { unreadNotificationsFunc } from '../../helpers/unreadNotifications.js';
 import moment from 'moment';
+import { clearNotifications, updateNotification } from '../../redux/socket/slice.js';
+import { setCurrentChat } from '../../redux/chat/slice.js';
 
 function Notification() {
+  const dispatch = useDispatch();
   const [isOpen ,setIsOpen] = useState(false);
   const notifications = useSelector(selectNotifications);
   const chats = useSelector(selectChats);
@@ -23,9 +26,34 @@ function Notification() {
     }
   });
 
-  console.log("un", unreadNotifications);
-  console.log("mn", modifiedNotifications);
+  //видалити всі нотифікації
+  const markAllNotificationsAsRead = useCallback(() => {
+    dispatch(clearNotifications());
+  }, [dispatch]);
 
+  const markNotificationAsRead = useCallback((n, notifications) => {
+    //у методі markNotificationAsRead шукає чат, пов'язаний з повідомленням,
+    //і намагається знайти конкретний чат, в якому беруть участь обидва користувачі -
+    // поточний користувач і відправник повідомлення
+    const desiredChat = chats.find(chat => {
+      const chatMembers = [user._id, n.senderId];
+      return chat?.members.every((member) => chatMembers.includes(member));
+    });
+
+    const updatedNotification = notifications.map(el => {
+      if (el.senderId === n.senderId) {
+        return { ...el, isRead: true };
+      }
+      return el;
+    });
+
+    if (updatedNotification) {
+      dispatch(updateNotification(updatedNotification));
+    }
+
+    dispatch(setCurrentChat(desiredChat));
+    setIsOpen(false);
+  }, [])
 
   return (
     <div className='notifications'>
@@ -44,14 +72,18 @@ function Notification() {
       {isOpen && (<div className='notifications-box'>
         <div className='notifications-header'>
           <h3>Notification</h3>
-          <div className="mark-as-read">
-            Mark all as read
+          <div className="mark-as-read" onClick={markAllNotificationsAsRead}>
+            Clear all notifications
           </div>
         </div>
         {modifiedNotifications?.length === 0 ? <span>No notification yet...</span> : null}
         {modifiedNotifications && modifiedNotifications.map((n, index) => {
           return (
-            <div key={index} className={n.isRead ? 'notification' : 'notification not-read'}>
+            <div
+              key={index}
+              className={n.isRead ? 'notification' : 'notification not-read'}
+              onClick={() => markNotificationAsRead(n, notifications)}
+            >
               <span>{`${n.senderName} send you a new message`}</span>
               <span className="notification-time">{moment(n.date).calendar()}</span>
             </div>
