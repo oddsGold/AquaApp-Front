@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectNotifications } from '../../redux/socket/selectors.js';
 import { selectChats, selectUsers } from '../../redux/chat/selectors.js';

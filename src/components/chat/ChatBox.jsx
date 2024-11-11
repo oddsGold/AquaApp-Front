@@ -24,35 +24,45 @@ function ChatBox({ user, currentChat, sendMessage }) {
   const newMessage = useSelector(selectNewMessage);
   const previousChatId = useRef(null);
 
-
+  //Відправка повідомлення через socket
+  //recipientId - id отримувача який знаходиться в currentChat.members і не співпадає з id авторизованого користувача
   useEffect(() => {
     if(currentChat) {
       const recipientId = currentChat.members.find((id) => id !== user._id);
 
       socketService.emit("sendMessage", {...newMessage, recipientId});
     }
-  }, [currentChat, dispatch, newMessage]);
+  }, [newMessage]);
 
   useEffect(() => {
+    //отримуємо повідомлення через socket
+    //виконується перевірка, чи збігається chatId отриманого повідомлення з вибраним чатом (currentChat._id)
     socketService.on("getMessage", (response) => {
 
       if(currentChat?._id !== response.chatId) return
 
       dispatch({ type: 'chat/addMessage', payload: response });
 
+      //отримуємо поточні повідомлення для поточного чату
       if(currentChat) dispatch(getUserMessages(currentChat._id));
 
     });
 
     socketService.on("getNotification", (response) => {
-      const isChatOpen = currentChat?.members.some(id => id === response.senderId);
+      if (!currentChat) {
+        dispatch(addUnreadNotification(response));
+        return;
+      }
+
+      const isChatOpen = currentChat.members.some(id => id === response.senderId);
 
       if (isChatOpen) {
         dispatch(addReadNotification(response));
       } else {
         dispatch(addUnreadNotification(response));
       }
-    })
+    });
+
 
 
     return () => {
