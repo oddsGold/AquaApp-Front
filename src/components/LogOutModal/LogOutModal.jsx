@@ -1,19 +1,12 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import css from './LogOutModal.module.css';
 import { logOut } from '../../redux/auth/operations';
-import { selectIsLoggedIn } from '../../redux/auth/selectors';
-import toast from 'react-hot-toast';
 
 const LogOutModal = ({onRequestClose}) => {
   const dispatch=useDispatch();
-  const isLoggedIn = useSelector(selectIsLoggedIn);
 
   const logOutUser=()=>{
     dispatch(logOut());
-
-    if(isLoggedIn){
-      toast.error("Something went wrong. Try again later")
-    }
   }
 
   return (

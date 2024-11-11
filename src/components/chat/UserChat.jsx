@@ -67,7 +67,7 @@ function UserChat({ chats, user, updateCurrentChat }) {
             <div onClick={() => handleChatClick(recipientUser)} key={recipientUser._id}>
               <Stack
                 direction='horizontal' gap={3}
-                className='user-card align-items-center p-2 justify-content-between'
+                className='user-card align-items-center justify-content-between'
                 role='button'
                 onClick={() => {
                   if (thisUserNotification?.length !== 0) {

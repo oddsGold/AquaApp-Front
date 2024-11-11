@@ -18,12 +18,6 @@ const socketSlice = createSlice({
     clearNotifications: (state) => {
       state.notifications = [];
     },
-    // clearNotifications: (state, action) => {
-    //   state.notifications = action.payload.map((notification) => ({
-    //     ...notification,
-    //     isRead: true
-    //   }));
-    // },
     updateNotification: (state, action) => {
       state.notifications = action.payload;
     },

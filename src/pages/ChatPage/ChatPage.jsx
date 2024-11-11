@@ -15,13 +15,14 @@ import {
   getUserMessages,
   sendUserMessages,
 } from '../../redux/chat/operations.js';
-import { Container, Stack } from 'react-bootstrap';
+import { Stack } from 'react-bootstrap';
 import css from './chat.module.css';
 import UserChat from '../../components/chat/UserChat.jsx';
 import PotentialChats from '../../components/chat/PotentialChats.jsx';
 import { setCurrentChat, setPotentialChat } from '../../redux/chat/slice.js';
 import ChatBox from '../../components/chat/ChatBox.jsx';
 import Notification from '../../components/chat/Notification.jsx';
+import { Link } from 'react-router-dom';
 
 const ChatPage = () => {
   const dispatch = useDispatch();
@@ -112,20 +113,23 @@ const ChatPage = () => {
   return (
     <ChatLayout>
       <div className={css.chat}>
-        <Container>
-          {/*комопнента для виводу всіх користувачів з якими може бути стоврено чат (якщо він ще не створенний)*/}
-          <PotentialChats onUserClick={createChat} />
-          {/****/}
+        <>
           {chats?.length < 1 ? null : (
-            <Stack direction='horizontal' gap={4} className="align-items-start">
-              <Stack className="messages-box flex-grow-0 pe-3" gap={3}>
+            <Stack direction='horizontal' className="align-items-start">
+              <Stack className="messages-box flex-grow-0" gap={3}>
+                <Link to="/tracker" className={css.logo}>
+                  AquaTrack
+                </Link>
+                {/*комопнента для виводу всіх користувачів з якими може бути стоврено чат (якщо він ще не створенний)*/}
+                <PotentialChats onUserClick={createChat} />
+                {/****/}
                 <Notification />
                 <UserChat chats={chats} user={user} updateCurrentChat={updateCurrentChat} />
               </Stack>
               <ChatBox user={user} currentChat={currentChat} sendMessage={sendMessage} />
             </Stack>
           )}
-        </Container>
+        </>
       </div>
     </ChatLayout>
   );

@@ -7,8 +7,8 @@ import {
 } from '../../redux/chat/selectors.js';
 import { Stack } from 'react-bootstrap';
 import moment from 'moment';
-import InputEmoji from "react-input-emoji";
-import { BsSend } from "react-icons/bs";
+import InputEmoji from 'react-input-emoji';
+import { BsSend } from 'react-icons/bs';
 import { getCompanionUserInfo, getUserMessages } from '../../redux/chat/operations.js';
 import { setCurrentRecipient } from '../../redux/chat/slice.js';
 import socketService from '../../services/socket-service.js';
@@ -16,7 +16,7 @@ import { addReadNotification, addUnreadNotification } from '../../redux/socket/s
 
 function ChatBox({ user, currentChat, sendMessage }) {
   const dispatch = useDispatch();
-  const [textMessage, setTextMessage] = useState("");
+  const [textMessage, setTextMessage] = useState('');
   const messagesEndRef = useRef(null);
   const isLoading = useSelector(selectLoading);
   const messages = useSelector(selectMessages);
@@ -27,28 +27,28 @@ function ChatBox({ user, currentChat, sendMessage }) {
   //Відправка повідомлення через socket
   //recipientId - id отримувача який знаходиться в currentChat.members і не співпадає з id авторизованого користувача
   useEffect(() => {
-    if(currentChat) {
+    if (currentChat) {
       const recipientId = currentChat.members.find((id) => id !== user._id);
 
-      socketService.emit("sendMessage", {...newMessage, recipientId});
+      socketService.emit('sendMessage', { ...newMessage, recipientId });
     }
   }, [newMessage]);
 
   useEffect(() => {
     //отримуємо повідомлення через socket
     //виконується перевірка, чи збігається chatId отриманого повідомлення з вибраним чатом (currentChat._id)
-    socketService.on("getMessage", (response) => {
+    socketService.on('getMessage', (response) => {
 
-      if(currentChat?._id !== response.chatId) return
+      if (currentChat?._id !== response.chatId) return;
 
       dispatch({ type: 'chat/addMessage', payload: response });
 
       //отримуємо поточні повідомлення для поточного чату
-      if(currentChat) dispatch(getUserMessages(currentChat._id));
+      if (currentChat) dispatch(getUserMessages(currentChat._id));
 
     });
 
-    socketService.on("getNotification", (response) => {
+    socketService.on('getNotification', (response) => {
       if (!currentChat) {
         dispatch(addUnreadNotification(response));
         return;
@@ -64,11 +64,10 @@ function ChatBox({ user, currentChat, sendMessage }) {
     });
 
 
-
     return () => {
-      socketService.off("getMessage");
-      socketService.off("getNotification");
-    }
+      socketService.off('getMessage');
+      socketService.off('getNotification');
+    };
   }, [currentChat, dispatch]);
 
   useEffect(() => {
@@ -99,7 +98,7 @@ function ChatBox({ user, currentChat, sendMessage }) {
       if (storedMessage) {
         setTextMessage(storedMessage);
       } else {
-        setTextMessage("");
+        setTextMessage('');
       }
     }
   }, [recipientUser]);
@@ -125,7 +124,7 @@ function ChatBox({ user, currentChat, sendMessage }) {
   const handleSendMessage = async () => {
     if (textMessage.trim()) {
       await sendMessage(textMessage, user._id, currentChat._id);
-      setTextMessage("");
+      setTextMessage('');
       localStorage.removeItem(recipientUser.user._id);
     }
   };
@@ -137,34 +136,48 @@ function ChatBox({ user, currentChat, sendMessage }) {
   }
 
   return (
-    <Stack gap={4} className="chat-box">
-      <div className="chat-header">
+    <Stack gap={4} className='chat-box'>
+      <div className='chat-header'>
+        <div className='chat-header-img'>
+          <img src={recipientUser?.user.avatar} alt='' />
+        </div>
         <strong>{recipientUser?.user.name || 'No recipient'}</strong>
       </div>
       <Stack gap={3} className='messages'>
         {Array.isArray(messages.messages) && messages.messages.length > 0 ? (
-          messages.messages.map((message) => (
-            <Stack key={message._id}
-                   className={`${message.senderId === user._id 
-                     ? 'message self align-self-end flex-grow-0' 
-                     : 'message align-self-start flex-grow-0'
-                   }`}
-                   ref={messagesEndRef}
-            >
-              <span>{message.text}</span>
-              <span className='message-footer'>{moment(message.createdAt).calendar()}</span>
-            </Stack>
-          ))
+          messages.messages.map((message) => {
+            const isSender = message.senderId === user._id;
+            const avatar = isSender ? user.avatar : recipientUser.user.avatar;
+            return (
+              <Stack key={message._id}
+                     className={`${message.senderId === user._id
+                       ? 'message self align-self-end flex-grow-0'
+                       : 'message friend align-self-start flex-grow-0'
+                     }`}
+                     ref={messagesEndRef}
+              >
+                <span>{message.text}</span>
+                <span className='message-footer'>{moment(message.createdAt).calendar()}</span>
+                <div className={`${message.senderId === user._id
+                  ? 'message-avatar self'
+                  : 'message-avatar friend'
+                }`}>
+                  <img src={avatar} alt='Sender Avatar' className='avatar-img' />
+                </div>
+              </Stack>
+            );
+          })
         ) : (
           <p>No messages available.</p>
         )}
       </Stack>
-      <Stack direction="horizontal" gap={3} className="chat-input flex-grow-0">
+      <Stack direction='horizontal' gap={3} className='chat-input flex-grow-0'>
         <InputEmoji
+          className='input-emoji'
           value={textMessage}
           onChange={setTextMessage}
-          fontFamily="nunito"
-          borderColor="rgba(72,112,223,.2)"
+          fontFamily='nunito'
+          borderColor='rgba(72,112,223,.2)'
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
@@ -172,7 +185,7 @@ function ChatBox({ user, currentChat, sendMessage }) {
             }
           }}
         />
-        <button className="sent-btn" onClick={handleSendMessage}>
+        <button className='sent-btn' onClick={handleSendMessage}>
           <BsSend />
         </button>
       </Stack>

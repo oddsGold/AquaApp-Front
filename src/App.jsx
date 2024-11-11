@@ -32,13 +32,20 @@ function App() {
     };
 
     refreshAndFetchUserInfo();
-  }, [dispatch]);
+  }, [dispatch, token]);
 
   return isRefreshing ? (
     <Loader />
   ) : (
-    <SharedLayout>
-      <Routes>
+    <Routes>
+      <Route
+        path="/chats"
+        element={
+          <PrivateRoute redirectTo="/signin" component={<ChatPage />} />
+        }
+      />
+
+      <Route element={<SharedLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route
           path="/signup"
@@ -55,7 +62,10 @@ function App() {
         <Route
           path="/confirm-oauth"
           element={
-            <RestrictedRoute redirectTo="/tracker" component={<GoogleAuthRedirect  />} />
+            <RestrictedRoute
+              redirectTo="/tracker"
+              component={<GoogleAuthRedirect />}
+            />
           }
         />
         <Route
@@ -64,15 +74,9 @@ function App() {
             <PrivateRoute redirectTo="/signin" component={<TrackerPage />} />
           }
         />
-        <Route
-          path="/chats"
-          element={
-            <PrivateRoute redirectTo="/signin" component={<ChatPage />} />
-          }
-        />
         <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </SharedLayout>
+      </Route>
+    </Routes>
   );
 }
 
