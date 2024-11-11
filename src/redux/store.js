@@ -14,6 +14,7 @@ import {
 import { authReducer } from './auth/slice';
 import watersReducer from './water/slice';
 import chatsReducer from './chat/slice';
+import socketReducer from './socket/slice.js';
 
 const authPersistConfig = {
   key: 'auth',
@@ -28,6 +29,7 @@ export const store = configureStore({
     auth: persistedAuthReducer,
     water: watersReducer,
     chats: chatsReducer,
+    socket: socketReducer,
   },
 
   middleware: getDefaultMiddleware =>

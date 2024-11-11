@@ -9,6 +9,7 @@ import { selectIsRefreshing, selectToken } from './redux/auth/selectors.js';
 import Loader from './components/Loader/Loader.jsx';
 import ChatPage from './pages/ChatPage/ChatPage.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
+import GoogleAuthRedirect from './components/LoginForm/GoogleAuthRedirect.jsx';
 
 const HomePage = lazy(() => import('./pages/HomePage/HomePage.jsx'));
 const SignInPage = lazy(() => import('./pages/SignInPage/SignInPage.jsx'));
@@ -49,6 +50,12 @@ function App() {
           path="/signin"
           element={
             <RestrictedRoute redirectTo="/tracker" component={<SignInPage />} />
+          }
+        />
+        <Route
+          path="/confirm-oauth"
+          element={
+            <RestrictedRoute redirectTo="/tracker" component={<GoogleAuthRedirect  />} />
           }
         />
         <Route

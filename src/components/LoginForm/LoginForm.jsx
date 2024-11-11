@@ -7,7 +7,7 @@ import { useState } from 'react';
 import sprite from '../../../public/sprite.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { getUserInfo, logIn } from '../../redux/auth/operations.js';
+import { getGoogleAuthURL, getUserInfo, logIn, loginWithGoogle } from '../../redux/auth/operations.js';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -50,6 +50,16 @@ const LoginForm = () => {
     }
   };
 
+  const googleLogIn = async () => {
+    try {
+      const data = await dispatch(getGoogleAuthURL()).unwrap();
+      window.location.href = data.data.url;
+
+    } catch (error) {
+      toast.error('Error logging in!');
+    }
+  };
+
   return (
     <div className={css.LoginWrapper}>
       <form className={css.LoginForm} onSubmit={handleSubmit(onSubmit)}>
@@ -62,10 +72,10 @@ const LoginForm = () => {
                 className={`${css.LoginInput} ${
                   errors.email ? css.formInputError : ''
                 }`}
-                type="email"
+                type='email'
                 {...register('email')}
-                autoComplete="email"
-                placeholder="Enter your email"
+                autoComplete='email'
+                placeholder='Enter your email'
               />
               <div className={css.errorMessageWrapper}>
                 {errors.email && <p>{errors.email.message}</p>}
@@ -81,12 +91,12 @@ const LoginForm = () => {
                 }`}
                 type={showPassword ? 'text' : 'password'}
                 {...register('password')}
-                autoComplete="new-password"
-                placeholder="Enter your password"
+                autoComplete='new-password'
+                placeholder='Enter your password'
               />
               <svg
-                width="20"
-                height="20"
+                width='20'
+                height='20'
                 className={css.singUpIcon}
                 onClick={() => setShowPassword(!showPassword)}
               >
@@ -103,9 +113,16 @@ const LoginForm = () => {
         <button
           className={css.LoginBtn}
           disabled={!isDirty || !isValid}
-          type="submit"
+          type='submit'
         >
           Sign In
+        </button>
+        <button
+          type='button'
+          className='login-with-google-btn'
+          onClick={() => googleLogIn()}
+        >
+          Sign in with Google
         </button>
         <div className={css.LoginChange}>
           <p className={css.LoginText}>

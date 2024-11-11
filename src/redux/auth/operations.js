@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import {
+  getGoogleOAuthUrlController, loginOrSignupWithGoogle,
   logInUser,
   logOutUser,
   registerUser,
@@ -16,6 +17,32 @@ export const logIn = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       const res = await logInUser(userData);
+      return res.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data.data.message);
+    }
+  },
+);
+
+//====================== SIGN IN WITH GOOGLE ======================
+
+export const getGoogleAuthURL = createAsyncThunk(
+  'auth/url',
+  async (_, thunkAPI) => {
+    try {
+      const res = await getGoogleOAuthUrlController();
+      return res.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data.data.message);
+    }
+  },
+);
+
+export const loginWithGoogle = createAsyncThunk(
+  'auth/logInGoogle',
+  async (code, thunkAPI) => {
+    try {
+      const res = await loginOrSignupWithGoogle(code);
       return res.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data.data.message);

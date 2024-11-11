@@ -5,6 +5,7 @@ import UserBarPopover from '../UserBarPopover/UserBarPopover';
 import css from './UserBar.module.css';
 import { useSelector } from 'react-redux';
 import { selectUserName, selectUserPhoto } from '../../redux/auth/selectors.js';
+import Notification from '../chat/Notification.jsx';
 
 export default function UserBar() {
   const [isShow, setIsShow] = useState(false);
@@ -61,48 +62,50 @@ export default function UserBar() {
   }, [isShow, isOpenSettingsModal, isOpenLogOutModal]);
 
   return (
-    <div className={css.wrapUserBar}>
-      <button
-        ref={buttonRef}
-        className={css.button}
-        type="button"
-        onClick={handlClick}
-      >
-        {userName ? userName : 'User'}
-        <div className={css.wrapAvatar}>
-          {userPhoto ? (
-            <img
-              src={userPhoto}
-              alt="Users avatar photo"
-              className={css.imgAvatar}
+    <>
+      <div className={css.wrapUserBar}>
+        <button
+          ref={buttonRef}
+          className={css.button}
+          type="button"
+          onClick={handlClick}
+        >
+          {userName ? userName : 'User'}
+          <div className={css.wrapAvatar}>
+            {userPhoto ? (
+              <img
+                src={userPhoto}
+                alt="Users avatar photo"
+                className={css.imgAvatar}
+              />
+            ) : (
+              <IoPersonCircleSharp className={css.avatar} />
+            )}
+          </div>
+          <div className={css.wrapIcon}>
+            {isShow ? (
+              <Icon id="chevron-up" className={css.icon} />
+            ) : (
+              <Icon id="chevron-down" className={css.icon} />
+            )}
+          </div>
+        </button>
+        {isShow && (
+          <div ref={popoverRef}>
+            <UserBarPopover
+              isOpenSettingsModal={isOpenSettingsModal}
+              openSettingsModal={openSettingsModal}
+              closeSettingsModal={closeSettingsModal}
+              isOpenLogOutModal={isOpenLogOutModal}
+              openLogOutModal={openLogOutModal}
+              closeLogOutModal={closeLogOutModal}
+              style={{
+                width: popoverWidth !== null ? `${popoverWidth}px` : 'auto',
+              }}
             />
-          ) : (
-            <IoPersonCircleSharp className={css.avatar} />
-          )}
-        </div>
-        <div className={css.wrapIcon}>
-          {isShow ? (
-            <Icon id="chevron-up" className={css.icon} />
-          ) : (
-            <Icon id="chevron-down" className={css.icon} />
-          )}
-        </div>
-      </button>
-      {isShow && (
-        <div ref={popoverRef}>
-          <UserBarPopover
-            isOpenSettingsModal={isOpenSettingsModal}
-            openSettingsModal={openSettingsModal}
-            closeSettingsModal={closeSettingsModal}
-            isOpenLogOutModal={isOpenLogOutModal}
-            openLogOutModal={openLogOutModal}
-            closeLogOutModal={closeLogOutModal}
-            style={{
-              width: popoverWidth !== null ? `${popoverWidth}px` : 'auto',
-            }}
-          />
-        </div>
-      )}
-    </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }

@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { INITIAL_STATE } from './initialState';
 import {
   getUserInfo,
-  logIn,
+  logIn, loginWithGoogle,
   logOut,
   refreshToken,
   signUp,
@@ -67,6 +67,24 @@ const authSlice = createSlice({
         state.successMessage = 'Successfully logged in';
       })
       .addCase(logIn.rejected, (state, action) => {
+        state.isLoading = false;
+        toast.errorMessage = action.payload;
+      })
+
+      ////////////////////////////////////////////////////
+      .addCase(loginWithGoogle.pending, (state, action) => {
+        state.isLoading = true;
+        state.errorMessage = null;
+        state.successMessage = null;
+        state.errorMessage = null;
+      })
+      .addCase(loginWithGoogle.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.token = action.payload.data.accessToken;
+        state.isLoggedIn = true;
+        state.successMessage = 'Successfully logged in';
+      })
+      .addCase(loginWithGoogle.rejected, (state, action) => {
         state.isLoading = false;
         toast.errorMessage = action.payload;
       })

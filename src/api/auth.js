@@ -10,6 +10,16 @@ export const logInUser = async userInfo => {
   return data;
 };
 
+export const getGoogleOAuthUrlController = async () => {
+  const data = await instance.get('/get-oauth-url');
+  return data;
+};
+
+export const loginOrSignupWithGoogle = async (code) => {
+  const data = await instance.post('/confirm-oauth', code);
+  return data;
+};
+
 export const logOutUser = async () => {
   await instance.post('/auth/logOut');
 };

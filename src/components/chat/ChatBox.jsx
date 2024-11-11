@@ -12,14 +12,13 @@ import { BsSend } from "react-icons/bs";
 import { getCompanionUserInfo, getUserMessages } from '../../redux/chat/operations.js';
 import { setCurrentRecipient } from '../../redux/chat/slice.js';
 import socketService from '../../services/socket-service.js';
+import { addReadNotification, addUnreadNotification } from '../../redux/socket/slice.js';
 
 function ChatBox({ user, currentChat, sendMessage }) {
   const dispatch = useDispatch();
   const [textMessage, setTextMessage] = useState("");
   const messagesEndRef = useRef(null);
-
   const isLoading = useSelector(selectLoading);
-
   const messages = useSelector(selectMessages);
   const recipientUser = useSelector(selectCurrentRecipient);
   const newMessage = useSelector(selectNewMessage);
@@ -37,17 +36,28 @@ function ChatBox({ user, currentChat, sendMessage }) {
   useEffect(() => {
     socketService.on("getMessage", (response) => {
 
-      console.log("response.chatId", response);
-
       if(currentChat?._id !== response.chatId) return
 
       dispatch({ type: 'chat/addMessage', payload: response });
 
-      dispatch(getUserMessages(currentChat._id));
+      if(currentChat) dispatch(getUserMessages(currentChat._id));
+
     });
+
+    socketService.on("getNotification", (response) => {
+      const isChatOpen = currentChat?.members.some(id => id === response.senderId);
+
+      if (isChatOpen) {
+        dispatch(addReadNotification(response));
+      } else {
+        dispatch(addUnreadNotification(response));
+      }
+    })
+
 
     return () => {
       socketService.off("getMessage");
+      socketService.off("getNotification");
     }
   }, [currentChat, dispatch]);
 
@@ -125,7 +135,12 @@ function ChatBox({ user, currentChat, sendMessage }) {
         {Array.isArray(messages.messages) && messages.messages.length > 0 ? (
           messages.messages.map((message) => (
             <Stack key={message._id}
-                   className={`${message.senderId === user._id ? 'message self align-self-end flex-grow-0' : 'message align-self-start flex-grow-0'}`}>
+                   className={`${message.senderId === user._id 
+                     ? 'message self align-self-end flex-grow-0' 
+                     : 'message align-self-start flex-grow-0'
+                   }`}
+                   ref={messagesEndRef}
+            >
               <span>{message.text}</span>
               <span className='message-footer'>{moment(message.createdAt).calendar()}</span>
             </Stack>
@@ -133,7 +148,6 @@ function ChatBox({ user, currentChat, sendMessage }) {
         ) : (
           <p>No messages available.</p>
         )}
-        <div ref={messagesEndRef} />
       </Stack>
       <Stack direction="horizontal" gap={3} className="chat-input flex-grow-0">
         <InputEmoji
