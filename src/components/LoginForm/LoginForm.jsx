@@ -117,13 +117,13 @@ const LoginForm = () => {
         >
           Sign In
         </button>
-        <button
-          type='button'
-          className='login-with-google-btn'
-          onClick={() => googleLogIn()}
-        >
-          Sign in with Google
-        </button>
+        {/*<button*/}
+        {/*  type='button'*/}
+        {/*  className='login-with-google-btn'*/}
+        {/*  onClick={() => googleLogIn()}*/}
+        {/*>*/}
+        {/*  Sign in with Google*/}
+        {/*</button>*/}
         <div className={css.LoginChange}>
           <p className={css.LoginText}>
             Don’t have an account?
