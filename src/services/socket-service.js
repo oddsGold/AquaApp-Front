@@ -7,7 +7,7 @@ class SocketService {
 
   connect() {
     if (!this.socket) {
-      this.socket = io("https://aqua-app.onrender.com");
+      this.socket = io("wss://aqua-app.onrender.com");
     }
   }
 
