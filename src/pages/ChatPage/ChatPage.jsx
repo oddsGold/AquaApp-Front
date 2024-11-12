@@ -63,7 +63,7 @@ const ChatPage = () => {
   }, [chats]);
 
   //отримуємо всі чати де учасником є залогінений користувач
-  useEffect( () => {
+  useEffect(() => {
     if (user._id) {
       dispatch(fetchUserChats(user._id));
     }
@@ -90,13 +90,13 @@ const ChatPage = () => {
 
   //передаємо в редакс (в state.chats.currentChat) вибраний нами чат, щоб потім можна було отримати повідомлення цього чату
   const updateCurrentChat = useCallback(async (chat) => {
-    await dispatch(setCurrentChat(chat))
+    await dispatch(setCurrentChat(chat));
   }, [dispatch]);
 
   //відправляємо повідомлення в вираному чаті, передаємо 3 аргументи (саме повідомлення, хто відправляє, id чату)
   //після відправки повідомлення забираємо всі повідомлення в цьому чаті
   const sendMessage = useCallback(async (textMessage, senderId, chatId, setTextMessage) => {
-    const data = {textMessage, senderId, chatId};
+    const data = { textMessage, senderId, chatId };
     await dispatch(sendUserMessages(data));
     await dispatch(getUserMessages(chatId));
   }, []);
@@ -114,21 +114,19 @@ const ChatPage = () => {
     <ChatLayout>
       <div className={css.chat}>
         <>
-          {chats?.length < 1 ? null : (
-            <Stack direction='horizontal' className="align-items-start">
-              <Stack className="messages-box flex-grow-0" gap={3}>
-                <Link to="/tracker" className={css.logo}>
-                  AquaTrack
-                </Link>
-                {/*комопнента для виводу всіх користувачів з якими може бути стоврено чат (якщо він ще не створенний)*/}
-                <PotentialChats onUserClick={createChat} />
-                {/****/}
-                <Notification />
-                <UserChat chats={chats} user={user} updateCurrentChat={updateCurrentChat} />
-              </Stack>
-              <ChatBox user={user} currentChat={currentChat} sendMessage={sendMessage} />
+          <Stack direction='horizontal' className='align-items-start'>
+            <Stack className='messages-box flex-grow-0' gap={3}>
+              <Link to='/tracker' className={css.logo}>
+                AquaTrack
+              </Link>
+              {/*комопнента для виводу всіх користувачів з якими може бути стоврено чат (якщо він ще не створенний)*/}
+              <PotentialChats onUserClick={createChat} />
+              {/****/}
+              <Notification />
+              <UserChat chats={chats} user={user} updateCurrentChat={updateCurrentChat} />
             </Stack>
-          )}
+            <ChatBox user={user} currentChat={currentChat} sendMessage={sendMessage} />
+          </Stack>
         </>
       </div>
     </ChatLayout>
