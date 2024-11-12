@@ -7,7 +7,7 @@ class SocketService {
 
   connect() {
     if (!this.socket) {
-      this.socket = io("http://localhost:3000");
+      this.socket = io("https://aqua-app.onrender.com");
     }
   }
 
