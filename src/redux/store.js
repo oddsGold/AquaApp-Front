@@ -22,14 +22,21 @@ const authPersistConfig = {
   whitelist: ['token'],
 };
 
+const socketPersistConfig = {
+  key: 'socket',
+  storage,
+  whitelist: ['notifications'],
+};
+
 const persistedAuthReducer = persistReducer(authPersistConfig, authReducer);
+const persistedSocketReducer = persistReducer(socketPersistConfig, socketReducer);
 
 export const store = configureStore({
   reducer: {
     auth: persistedAuthReducer,
     water: watersReducer,
     chats: chatsReducer,
-    socket: socketReducer,
+    socket: persistedSocketReducer,
   },
 
   middleware: getDefaultMiddleware =>

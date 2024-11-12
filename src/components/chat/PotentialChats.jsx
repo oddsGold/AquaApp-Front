@@ -8,7 +8,6 @@ function PotentialChats({ onUserClick }) {
   return (
     <div className='all-users'>
       {potentialChats && potentialChats.map((u) => {
-        console.log(u);
         return (
           <div
             className='single-user'

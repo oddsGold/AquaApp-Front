@@ -1,11 +1,13 @@
 import useFetchRecipientUser from '../../hooks/useFetchRecipient.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { Stack } from 'react-bootstrap';
-import { selectMessages, selectOnlineUsers, selectUserChat } from '../../redux/chat/selectors.js';
+import { selectOnlineUsers, selectUserChat } from '../../redux/chat/selectors.js';
 import { selectNotifications } from '../../redux/socket/selectors.js';
 import { unreadNotificationsFunc } from '../../helpers/unreadNotifications.js';
 import { useCallback } from 'react';
 import { updateNotification } from '../../redux/socket/slice.js';
+import useFetchLatestMessage from '../../hooks/useFetchLatestMessage.jsx';
+import moment from 'moment';
 
 function UserChat({ chats, user, updateCurrentChat }) {
   const dispatch = useDispatch();
@@ -14,7 +16,6 @@ function UserChat({ chats, user, updateCurrentChat }) {
   const onlineUsers = useSelector(selectOnlineUsers);
   const notifications = useSelector(selectNotifications);
   const unreadNotifications = unreadNotificationsFunc(notifications);
-  const messages = useSelector(selectMessages);
 
   // Сортируем чаты по времени создания (createdAt), чтобы порядок оставался сталым
   const sortedChats = recipientUsers?.slice().sort((a, b) => {
@@ -22,6 +23,9 @@ function UserChat({ chats, user, updateCurrentChat }) {
     const chatB = chats.find(chat => chat.members.includes(b._id));
     return new Date(chatA.createdAt) - new Date(chatB.createdAt);
   });
+
+  const { latestMessages } = useFetchLatestMessage(chats);
+  console.log("latestMessages", latestMessages);
 
   // Выбор чата с определённым собеседником из списка
   // Обновляем текущий активный чат
@@ -53,6 +57,16 @@ function UserChat({ chats, user, updateCurrentChat }) {
     dispatch(updateNotification(mNotification));
   }, []);
 
+  const truncateText = (text) => {
+    let shortText = text.substring(0, 20);
+
+    if(text.length > 20) {
+      shortText = shortText + "...";
+    }
+
+    return shortText;
+  }
+
   return (
     <div>
       {sortedChats && sortedChats.length > 0 ? (
@@ -62,6 +76,12 @@ function UserChat({ chats, user, updateCurrentChat }) {
           const thisUserNotification = unreadNotifications?.filter(
             n => n.senderId === recipientUser._id,
           );
+
+          const relatedChat = chats.find(chat =>
+            chat.members.includes(user._id) && chat.members.includes(recipientUser._id)
+          );
+          const chatMessages = latestMessages?.find(msg => msg.chatId === relatedChat?._id);
+          const lastMessageText = chatMessages?.lastMessage?.text || 'No messages';
 
           return (
             <div onClick={() => handleChatClick(recipientUser)} key={recipientUser._id}>
@@ -82,12 +102,14 @@ function UserChat({ chats, user, updateCurrentChat }) {
                   </div>
                   <div className='text-content'>
                     <div className='name'>{recipientUser.name}</div>
-                    <div className='text'>Text message</div>
+                    <div className='text'>
+                      <div>{truncateText(lastMessageText)}</div>
+                    </div>
                   </div>
                 </div>
                 <div className='d-flex flex-column align-items-end'>
                   <div className='date'>
-                    12/12/2023
+                    {chatMessages && chatMessages.lastMessage ? moment(chatMessages.lastMessage.createdAt).calendar() : ''}
                   </div>
                   <div className={thisUserNotification?.length > 0 ? 'this-user-notifications' : ''}>
                     {thisUserNotification?.length > 0 ? thisUserNotification?.length : ''}

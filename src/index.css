@@ -94,6 +94,10 @@ body {
   color: rgb(122, 127, 154);
 }
 
+.user-card .date {
+  font-size: 11px;
+}
+
 .user-online {
   display: inline-block;
   height: 12px;
